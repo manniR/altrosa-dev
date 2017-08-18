@@ -1,0 +1,57 @@
+server {
+#listen 80 default_server;
+    listen 80;
+#listen [::]:80 default_server ipv6only=on;
+
+    server_name craft-altrosa.dev;
+    root /Users/macpro/Code/bitsync2/craft-altrosa/dist/public;
+    index index.php index.html index.htm;
+
+
+###############################
+#   MOD REWRITE BLOCK START   #
+###############################
+
+## Use Block 1 if you are working with multilingual craft cms.
+## For example, for me it was en: http://localhost/ and for de: http://localhost/de
+## For single language craft cms website, use Block 2
+
+### BLOCK 1 START ###
+#    location / {
+#        try_files $uri $uri/ @rewrites;
+#
+#    }
+#
+#    location @rewrites {
+#        rewrite ^(/en_gb|de|fr|es)?/(.*)$ $1/index.php?p=$2&$args? last;
+#
+#    }
+
+### BLOCK 1 END ###
+
+### BLOCK 2 START ###
+    location / {
+        try_files $uri $uri/ @rewrites;
+
+    }
+
+    location @rewrites {
+        rewrite ^(.*) /index.php?p=$1 last;
+
+    }
+### BLOCK 2 END ###
+
+###############################
+#   MOD REWRITE BLOCK ENDS    #
+###############################
+
+
+    location ~ \.php$ {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        try_files $fastcgi_script_name =404;
+        fastcgi_index index.php;
+        include fastcgi.conf;
+    }
+
+}
